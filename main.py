@@ -5,7 +5,7 @@ from urllib.parse import urljoin
 
 from bs4 import BeautifulSoup, Tag
 from bs4.element import AttributeValueList
-from markitdown import MarkItDown
+from markdownify import markdownify
 
 import flaresolverr
 from flaresolverr import FlareSolverr
@@ -94,14 +94,6 @@ class NewsDetail(TypedDict):
     figure: str
 
 
-class MyMarkItDown(MarkItDown):
-    def convert_str(self, s: str):
-        return super().convert(io.BytesIO(s.encode()))
-
-
-my_markitdown = MyMarkItDown()
-
-
 def news_detail_to_markdown(news: NewsDetail) -> str:
     buf = io.StringIO()
 
@@ -112,11 +104,11 @@ def news_detail_to_markdown(news: NewsDetail) -> str:
     buf.write(news["subtitle"])
     buf.write("\n")
 
-    buf.write(my_markitdown.convert_str(news["figure"]).markdown)
+    buf.write(markdownify(news["figure"]))
     buf.write("\n")
     buf.write("---")
     buf.write("\n")
-    buf.write(my_markitdown.convert_str(news["article_content"]).markdown)
+    buf.write(markdownify(news["article_content"]))
 
     return buf.getvalue()
 
