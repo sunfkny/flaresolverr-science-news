@@ -1,3 +1,4 @@
+import datetime
 import io
 from typing import TypedDict
 from urllib.parse import urljoin
@@ -51,6 +52,7 @@ def to_absolute_url(text: str):
 class NewsListItem(TypedDict):
     title: str
     url: str
+    date: datetime.date
 
 
 def get_news_list(
@@ -72,11 +74,14 @@ def get_news_list(
     soup = BeautifulSoup(html_content, "html.parser")
 
     results: list[NewsListItem] = []
-    for a in soup.select(".titles-results .card__title a"):
+    for article in soup.select(".titles-results article"):
+        a = must_select_one(article.select_one(".card__title a"))
+        date_str = must_select_one(article.select_one("time")).get_text()
         results.append(
             {
                 "title": must_get_one(a, "title"),
                 "url": urljoin(SCIENCE_BASE_URL, must_get_one(a, "href")),
+                "date": datetime.datetime.strptime(date_str, "%d %b %Y").date(),
             }
         )
     return results
@@ -163,8 +168,7 @@ if __name__ == "__main__":
 
     news_list = get_news_list(start_page=0)
     for i in news_list:
-        print(i["title"])
-        print(i["url"])
+        print(i)
 
     print("=" * 80)
     res = get_news_detail(
