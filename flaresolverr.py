@@ -6,7 +6,7 @@ Installation by docker
 -----------------------
 
 .. code-block:: shell
-    docker run -it --rm --name=flaresolverr -p 8191:8191 -e LOG_LEVEL=info -e TEST_URL=https://www.example.com ghcr.io/flaresolverr/flaresolverr:latest
+    docker run -it --rm --name=flaresolverr -p 8191:8191 -e LOG_LEVEL=info -e TEST_URL=https://www.example.com --add-host=host.docker.internal:host-gateway ghcr.io/flaresolverr/flaresolverr:latest
 
 """
 
